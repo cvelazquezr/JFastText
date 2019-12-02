@@ -5,11 +5,8 @@ import org.bytedeco.javacpp.PointerPointer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -107,15 +104,33 @@ public class JFastText {
     }
 
     public String predict(String text){
-        List<String> predictions = predict(text, 1);
+        List<String> predictions = predict(text, 1, (float)0.0);
         return predictions.size() > 0? predictions.get(0): null;
     }
 
     public List<String> predict(String text, int k) {
+        if (k == -1)
+            k = 1000;
+
         if (k <= 0) {
             throw new IllegalArgumentException("k must be positive");
         }
-        FastTextWrapper.StringVector sv = fta.predict(text, k);
+        FastTextWrapper.StringVector sv = fta.predict(text, k, (float)0.0);
+        List<String> predictions = new ArrayList<>();
+        for (int i = 0; i < sv.size(); i++) {
+            predictions.add(sv.get(i).getString());
+        }
+        return predictions;
+    }
+
+    public List<String> predict(String text, int k, float threshold) {
+        if (k == -1)
+            k = 1000;
+
+        if (k <= 0) {
+            throw new IllegalArgumentException("k must be positive");
+        }
+        FastTextWrapper.StringVector sv = fta.predict(text, k, threshold);
         List<String> predictions = new ArrayList<>();
         for (int i = 0; i < sv.size(); i++) {
             predictions.add(sv.get(i).getString());

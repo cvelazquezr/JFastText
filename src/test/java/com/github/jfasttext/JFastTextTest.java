@@ -62,18 +62,23 @@ public class JFastTextTest {
         JFastText jft = new JFastText();
         jft.loadModel("src/test/resources/models/supervised.model.bin");
         String text = "I like soccer";
-        String predictedLabel = jft.predict(text);
-        System.out.printf("\nText: '%s', label: '%s'\n", text, predictedLabel);
+        
+        List<String> predictedLabel = jft.predict(text, -1, (float) 0.1);
+        
+        for (String label : predictedLabel) {
+            System.out.printf("Text: '%s', label: '%s'\n", text, label);
+        }
     }
 
 	@Test
 	public void test04getArrayVector() throws Exception {
 		JFastText jft = new JFastText();
 		jft.loadModel("src/test/resources/models/supervised.model.bin");
-		String text = "I like soccer";
+        String text = "I like soccer";
+
 		float[] predictedArray = jft.getArrayVector(text);
 		float[] expected = new float[100];
-		assertArrayEquals("", predictedArray, expected, 0.1f);
+        assertArrayEquals("", predictedArray, expected, 0.1f);
 	}
 
     @Test
