@@ -1,7 +1,13 @@
-.idea/
-target/
+# Files
 *.iml
 *.bin
 *.vec
+.classpath
+.project
+
+# Folders
+.idea/
+.settings/
+target/
 examples/cmd/data
 examples/cmd/result
