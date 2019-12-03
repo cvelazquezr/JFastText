@@ -8,7 +8,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import static org.junit.Assert.assertEquals;
 
@@ -63,10 +65,10 @@ public class JFastTextTest {
         jft.loadModel("src/test/resources/models/supervised.model.bin");
         String text = "I like soccer";
         
-        List<String> predictedLabel = jft.predict(text, -1, (float) 0.1);
+        HashMap<String, Float> predictions = jft.predict(text, -1, (float) 0.4);
         
-        for (String label : predictedLabel) {
-            System.out.printf("Text: '%s', label: '%s'\n", text, label);
+        for (Entry item : predictions.entrySet()) {
+            System.out.printf("Item: %s %f\n", item.getKey(), item.getValue());
         }
     }
 

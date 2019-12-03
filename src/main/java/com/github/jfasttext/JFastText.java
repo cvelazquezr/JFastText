@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class JFastText {
@@ -103,38 +104,46 @@ public class JFastText {
         fta.test(testFile, k);
     }
 
-    public String predict(String text){
-        List<String> predictions = predict(text, 1, (float)0.0);
-        return predictions.size() > 0? predictions.get(0): null;
+    public HashMap<String, Float> predict(String text){
+        HashMap<String, Float> predictions = predict(text, 1, (float)0.0);
+        return predictions;
     }
 
-    public List<String> predict(String text, int k) {
+    public HashMap<String, Float> predict(String text, int k) {
         if (k == -1)
             k = 1000;
 
         if (k <= 0) {
             throw new IllegalArgumentException("k must be positive");
         }
-        FastTextWrapper.StringVector sv = fta.predict(text, k, (float)0.0);
-        List<String> predictions = new ArrayList<>();
-        for (int i = 0; i < sv.size(); i++) {
-            predictions.add(sv.get(i).getString());
+        FastTextWrapper.FloatStringPairVector vector = fta.predict(text, k, (float)0.0);
+        
+        HashMap<String, Float> predictions = new HashMap<>();
+        for (int i = 0; i < vector.size(); i++) {
+            float probability = vector.first(i);
+            String label = vector.second(i).getString();
+            predictions.put(label, probability);
         }
         return predictions;
     }
 
-    public List<String> predict(String text, int k, float threshold) {
+    public HashMap<String, Float> predict(String text, int k, float threshold) {
         if (k == -1)
             k = 1000;
 
         if (k <= 0) {
             throw new IllegalArgumentException("k must be positive");
         }
-        FastTextWrapper.StringVector sv = fta.predict(text, k, threshold);
-        List<String> predictions = new ArrayList<>();
-        for (int i = 0; i < sv.size(); i++) {
-            predictions.add(sv.get(i).getString());
+        
+        FastTextWrapper.FloatStringPairVector vector = fta.predict(text, k, threshold);
+        HashMap<String, Float> predictions = new HashMap<>();
+
+        for (int i = 0; i < vector.size(); i++) {
+            float probability = vector.first(i);
+            String label = vector.second(i).getString();
+            predictions.put(label, probability);
         }
+
         return predictions;
     }
 
