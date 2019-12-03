@@ -61,18 +61,12 @@ namespace FastTextWrapper {
         fastText.test(ifs, k);
     }
 
-    std::vector<std::string> FastTextApi::predict(const std::string& text, int32_t k, real threshold) {
+    std::vector<std::pair<real,std::string>> FastTextApi::predict(const std::string& text, int32_t k, real threshold) {
         std::vector<std::pair<real,std::string>> predictions;
         std::istringstream in(text);
 
         fastText.predictLine(in, predictions, k, threshold);
-        std::vector<std::string> labels;
-
-        for (auto it = predictions.cbegin(); it != predictions.cend(); ++it) {
-            std::cout << it -> first << std::endl;
-            labels.push_back(it->second);
-        }
-        return labels;
+        return predictions;
     }
 
     std::vector<std::pair<real,std::string>> FastTextApi::predictProba(
